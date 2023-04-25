@@ -2,13 +2,13 @@ package com.paulomoura.desafiomobile
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.paulomoura.desafiomobile.databinding.ActivityRegistrationBinding
 import com.paulomoura.desafiomobile.extension.bindings
 import com.paulomoura.desafiomobile.extension.isEmailValid
+import com.paulomoura.desafiomobile.extension.toast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -23,29 +23,38 @@ class RegistrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.btnRegister.setOnClickListener { validateInfo() }
+        binding.btnRegister.setOnClickListener { registerUser() }
     }
 
-    private fun validateInfo() {
+    private fun registerUser() {
         val email = binding.tieEmail.text.toString().trim()
         val password = binding.tiePassword.text.toString().trim()
+        if (isValidInfo(email, password)) createUser(email, password)
+    }
+
+    private fun isValidInfo(email: String, password: String): Boolean {
         if (!email.isEmailValid()) {
-            Toast.makeText(this, "Digite um e-mail válido", Toast.LENGTH_SHORT).show()
-            return
+            toast("Digite um e-mail válido")
+            return false
         }
         if (password.isEmpty()) {
-            Toast.makeText(this, "Digite uma senha", Toast.LENGTH_SHORT).show()
-            return
+            toast("Digite uma senha")
+            return false
         }
-        createUser(email, password)
+        return true
     }
 
     private fun createUser(email: String, password: String) {
         binding.pbLoading.isVisible = true
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             binding.pbLoading.isVisible = false
-            if (task.isSuccessful) showSuccessDialog() else showErrorDialog()
+            if (task.isSuccessful) handleCreateUserSuccess() else handleCreateUserError()
         }
+    }
+
+    private fun handleCreateUserSuccess() {
+        showSuccessDialog()
+        //analytics
     }
 
     private fun showSuccessDialog() {
@@ -54,6 +63,11 @@ class RegistrationActivity : AppCompatActivity() {
             setPositiveButton("OK") { _, _ -> finish() }
             create()
         }.show()
+    }
+
+    private fun handleCreateUserError() {
+        showErrorDialog()
+        //crashlytics
     }
 
     private fun showErrorDialog() {
