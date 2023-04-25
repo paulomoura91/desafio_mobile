@@ -23,9 +23,7 @@ class RegistrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.btnRegister.setOnClickListener {
-            validateInfo()
-        }
+        binding.btnRegister.setOnClickListener { validateInfo() }
     }
 
     private fun validateInfo() {
@@ -44,7 +42,7 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun createUser(email: String, password: String) {
         binding.pbLoading.isVisible = true
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this@RegistrationActivity) { task ->
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             binding.pbLoading.isVisible = false
             if (task.isSuccessful) showSuccessDialog() else showErrorDialog()
         }
