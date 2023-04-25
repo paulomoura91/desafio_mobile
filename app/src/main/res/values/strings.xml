@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Desafio Mobile</string>
+    <string name="email">E-mail</string>
+    <string name="senha">Senha</string>
+    <string name="entrar">Entrar</string>
+    <string name="novo_usuario_cadastro">Novo usuário? Cadastrar</string>
+    <string name="login">Login</string>
+    <string name="cadastrar">Cadastrar</string>
 </resources>
