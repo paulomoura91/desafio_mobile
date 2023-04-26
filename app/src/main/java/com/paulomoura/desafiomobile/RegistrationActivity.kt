@@ -4,7 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ktx.Firebase
+import com.paulomoura.desafiomobile.constants.AnalyticsConstants
 import com.paulomoura.desafiomobile.databinding.ActivityRegistrationBinding
 import com.paulomoura.desafiomobile.extension.bindings
 import com.paulomoura.desafiomobile.extension.isEmailValid
@@ -54,7 +59,16 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun handleCreateUserSuccess() {
         showSuccessDialog()
-        //analytics
+        auth.currentUser?.let { firebaseUser ->
+            logRegisterUser(firebaseUser)
+        }
+    }
+
+    private fun logRegisterUser(firebaseUser: FirebaseUser) {
+        Firebase.analytics.logEvent(AnalyticsConstants.EVENT_REGISTER_USER) {
+            param(AnalyticsConstants.PARAM_USER_ID, firebaseUser.uid)
+            param(AnalyticsConstants.PARAM_USER_EMAIL, firebaseUser.email ?: "")
+        }
     }
 
     private fun showSuccessDialog() {

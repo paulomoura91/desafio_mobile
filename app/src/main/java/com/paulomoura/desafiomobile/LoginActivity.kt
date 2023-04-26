@@ -1,10 +1,17 @@
 package com.paulomoura.desafiomobile
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.view.isVisible
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ktx.Firebase
+import com.paulomoura.desafiomobile.constants.AnalyticsConstants
+import com.paulomoura.desafiomobile.constants.SharedPreferencesConstants
 import com.paulomoura.desafiomobile.databinding.ActivityLoginBinding
 import com.paulomoura.desafiomobile.extension.bindings
 import com.paulomoura.desafiomobile.extension.toast
@@ -54,8 +61,28 @@ class LoginActivity : AppCompatActivity() {
 
     private fun handleLoginSuccess() {
         startActivity(Intent(this, MapActivity::class.java))
-        //analytics
-        //salvar os dados no shared preferences
+        auth.currentUser?.let { firebaseUser ->
+            saveUserData(firebaseUser)
+            logLogin(firebaseUser)
+        }
+    }
+
+    private fun saveUserData(firebaseUser: FirebaseUser) {
+        val preferences = getSharedPreferences(SharedPreferencesConstants.GLOBAL_PREFERENCES, Context.MODE_PRIVATE)
+        preferences?.let {
+            with(it.edit()) {
+                putString(SharedPreferencesConstants.KEY_FIREBASE_USER_ID, firebaseUser.uid)
+                putString(SharedPreferencesConstants.KEY_FIREBASE_USER_EMAIL, firebaseUser.email)
+                apply()
+            }
+        }
+    }
+
+    private fun logLogin(firebaseUser: FirebaseUser) {
+        Firebase.analytics.logEvent(AnalyticsConstants.EVENT_LOGIN) {
+            param(AnalyticsConstants.PARAM_USER_ID, firebaseUser.uid)
+            param(AnalyticsConstants.PARAM_USER_EMAIL, firebaseUser.email ?: "")
+        }
     }
 
     private fun handleLoginError() {
