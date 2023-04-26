@@ -1,4 +1,4 @@
-package com.paulomoura.desafiomobile.constants
+package com.paulomoura.desafiomobile.constant
 
 object SharedPreferencesConstants {
     const val GLOBAL_PREFERENCES = "global_preferences"

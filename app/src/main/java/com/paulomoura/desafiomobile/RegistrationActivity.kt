@@ -8,9 +8,11 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.paulomoura.desafiomobile.constants.AnalyticsConstants
+import com.paulomoura.desafiomobile.constant.AnalyticsConstants
 import com.paulomoura.desafiomobile.databinding.ActivityRegistrationBinding
+import com.paulomoura.desafiomobile.exception.RegisterUserErrorException
 import com.paulomoura.desafiomobile.extension.bindings
 import com.paulomoura.desafiomobile.extension.isEmailValid
 import com.paulomoura.desafiomobile.extension.toast
@@ -34,7 +36,7 @@ class RegistrationActivity : AppCompatActivity() {
     private fun registerUser() {
         val email = binding.tieEmail.text.toString().trim()
         val password = binding.tiePassword.text.toString().trim()
-        if (isValidInfo(email, password)) createUser(email, password)
+        if (isValidInfo(email, password)) performRegistration(email, password)
     }
 
     private fun isValidInfo(email: String, password: String): Boolean {
@@ -49,15 +51,15 @@ class RegistrationActivity : AppCompatActivity() {
         return true
     }
 
-    private fun createUser(email: String, password: String) {
+    private fun performRegistration(email: String, password: String) {
         binding.pbLoading.isVisible = true
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             binding.pbLoading.isVisible = false
-            if (task.isSuccessful) handleCreateUserSuccess() else handleCreateUserError()
+            if (task.isSuccessful) handleRegisterUserSuccess() else handleRegisterUserError()
         }
     }
 
-    private fun handleCreateUserSuccess() {
+    private fun handleRegisterUserSuccess() {
         showSuccessDialog()
         auth.currentUser?.let { firebaseUser ->
             logRegisterUser(firebaseUser)
@@ -79,9 +81,9 @@ class RegistrationActivity : AppCompatActivity() {
         }.show()
     }
 
-    private fun handleCreateUserError() {
+    private fun handleRegisterUserError() {
         showErrorDialog()
-        //crashlytics
+        logRegisterUserError()
     }
 
     private fun showErrorDialog() {
@@ -91,4 +93,6 @@ class RegistrationActivity : AppCompatActivity() {
             create()
         }.show()
     }
+
+    private fun logRegisterUserError() = Firebase.crashlytics.recordException(RegisterUserErrorException())
 }

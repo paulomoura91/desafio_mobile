@@ -1,4 +1,4 @@
-package com.paulomoura.desafiomobile.constants
+package com.paulomoura.desafiomobile.constant
 
 object AnalyticsConstants {
     const val EVENT_LOGIN = "login"

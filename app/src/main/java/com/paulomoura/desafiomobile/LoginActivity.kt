@@ -9,10 +9,12 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.paulomoura.desafiomobile.constants.AnalyticsConstants
-import com.paulomoura.desafiomobile.constants.SharedPreferencesConstants
+import com.paulomoura.desafiomobile.constant.AnalyticsConstants
+import com.paulomoura.desafiomobile.constant.SharedPreferencesConstants
 import com.paulomoura.desafiomobile.databinding.ActivityLoginBinding
+import com.paulomoura.desafiomobile.exception.LoginErrorException
 import com.paulomoura.desafiomobile.extension.bindings
 import com.paulomoura.desafiomobile.extension.toast
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,11 +31,11 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.btnSignin.setOnClickListener { signInUser() }
+        binding.btnLogin.setOnClickListener { loginUser() }
         binding.llRegistration.setOnClickListener { startActivity(Intent(this@LoginActivity, RegistrationActivity::class.java)) }
     }
 
-    private fun signInUser() {
+    private fun loginUser() {
         val email = binding.tieEmail.text.toString().trim()
         val password = binding.tiePassword.text.toString().trim()
         if (isValidInfo(email, password)) performLogin(email, password)
@@ -87,6 +89,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun handleLoginError() {
         toast("Erro ao entrar na aplicação")
-        //crashlytics
+        logLoginError()
     }
+
+    private fun logLoginError() = Firebase.crashlytics.recordException(LoginErrorException())
 }
