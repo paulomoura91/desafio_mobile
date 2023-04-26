@@ -62,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleLoginSuccess() {
-        startActivity(Intent(this, MapActivity::class.java))
+        startActivity(Intent(this, MapsActivity::class.java))
         auth.currentUser?.let { firebaseUser ->
             saveUserData(firebaseUser)
             logLogin(firebaseUser)
