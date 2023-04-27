@@ -1,4 +1,4 @@
-package com.paulomoura.desafiomobile
+package com.paulomoura.desafiomobile.service
 
 import android.Manifest
 import android.content.Context

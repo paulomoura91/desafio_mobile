@@ -1,4 +1,4 @@
-package com.paulomoura.desafiomobile
+package com.paulomoura.desafiomobile.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

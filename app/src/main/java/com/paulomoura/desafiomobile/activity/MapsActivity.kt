@@ -1,4 +1,4 @@
-package com.paulomoura.desafiomobile
+package com.paulomoura.desafiomobile.activity
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,6 +13,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.paulomoura.desafiomobile.R
 import com.paulomoura.desafiomobile.data.dao.UserLocationDao
 import com.paulomoura.desafiomobile.data.model.toUserLocation
 import com.paulomoura.desafiomobile.databinding.ActivityMapsBinding

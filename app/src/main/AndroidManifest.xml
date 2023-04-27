@@ -27,13 +27,13 @@
             android:foregroundServiceType="location" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activity.MapsActivity"
             android:exported="false" />
         <activity
-            android:name=".RegistrationActivity"
+            android:name=".activity.RegistrationActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

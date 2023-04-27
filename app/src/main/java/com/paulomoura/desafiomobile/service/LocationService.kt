@@ -10,10 +10,9 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.paulomoura.desafiomobile.LocationClient
-import com.paulomoura.desafiomobile.MapsActivity.Companion.ACTION_LOCATION_UPDATE
-import com.paulomoura.desafiomobile.MapsActivity.Companion.LAT_EXTRA
-import com.paulomoura.desafiomobile.MapsActivity.Companion.LONG_EXTRA
+import com.paulomoura.desafiomobile.activity.MapsActivity.Companion.ACTION_LOCATION_UPDATE
+import com.paulomoura.desafiomobile.activity.MapsActivity.Companion.LAT_EXTRA
+import com.paulomoura.desafiomobile.activity.MapsActivity.Companion.LONG_EXTRA
 import com.paulomoura.desafiomobile.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
