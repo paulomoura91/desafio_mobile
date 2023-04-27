@@ -12,9 +12,17 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.paulomoura.desafiomobile.data.dao.UserLocationDao
+import com.paulomoura.desafiomobile.data.model.toUserLocation
 import com.paulomoura.desafiomobile.databinding.ActivityMapsBinding
 import com.paulomoura.desafiomobile.extension.bindings
 import com.paulomoura.desafiomobile.service.LocationService
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -44,7 +52,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onDestroy()
     }
 
+    @AndroidEntryPoint
     inner class LocationUpdateReceiver : BroadcastReceiver() {
+
+        @Inject
+        lateinit var userLocationDao: UserLocationDao
+        @Inject
+        lateinit var auth: FirebaseAuth
+
         private var isStartingMarker = true
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == ACTION_LOCATION_UPDATE) {
@@ -54,11 +69,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     googleMap.clear()
                     val currentLocation = LatLng(lat, long)
                     googleMap.addMarker(MarkerOptions().position(currentLocation))
+                    saveLastLocation(currentLocation)
                     if (isStartingMarker) {
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12f))
                         isStartingMarker = false
-                        //colocar loading até ter primeira localizacao
                     }
+                }
+            }
+        }
+
+        private fun saveLastLocation(latLong: LatLng) {
+            CoroutineScope(Dispatchers.Unconfined).launch {
+                auth.currentUser?.let {
+                    userLocationDao.insert(latLong.toUserLocation(it))
+                    val userLocation = userLocationDao.getUserLocation(it.uid)
+                    userLocation.toString()
                 }
             }
         }
