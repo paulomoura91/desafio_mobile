@@ -17,12 +17,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.paulomoura.desafiomobile.constant.AnalyticsConstants
 import com.paulomoura.desafiomobile.constant.SharedPreferencesConstants
 import com.paulomoura.desafiomobile.databinding.ActivityLoginBinding
@@ -40,6 +39,10 @@ class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var auth: FirebaseAuth
+    @Inject
+    lateinit var analytics: FirebaseAnalytics
+    @Inject
+    lateinit var crashlytics: FirebaseCrashlytics
 
     @SuppressLint("InlinedApi")
     private val permissionsRequest = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -161,7 +164,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun logLogin(firebaseUser: FirebaseUser) {
-        Firebase.analytics.logEvent(AnalyticsConstants.EVENT_LOGIN) {
+        analytics.logEvent(AnalyticsConstants.EVENT_LOGIN) {
             param(AnalyticsConstants.PARAM_USER_ID, firebaseUser.uid)
             param(AnalyticsConstants.PARAM_USER_EMAIL, firebaseUser.email ?: "")
         }
@@ -172,5 +175,5 @@ class LoginActivity : AppCompatActivity() {
         logLoginError()
     }
 
-    private fun logLoginError() = Firebase.crashlytics.recordException(LoginErrorException())
+    private fun logLoginError() = crashlytics.recordException(LoginErrorException())
 }

@@ -8,12 +8,12 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.paulomoura.desafiomobile.activity.MapsActivity.Companion.ACTION_LOCATION_UPDATE
 import com.paulomoura.desafiomobile.activity.MapsActivity.Companion.LAT_EXTRA
 import com.paulomoura.desafiomobile.activity.MapsActivity.Companion.LONG_EXTRA
 import com.paulomoura.desafiomobile.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,8 +21,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LocationService : Service() {
+
+    @Inject
+    lateinit var crashlytics: FirebaseCrashlytics
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val locationClient by lazy { LocationClient(applicationContext, LocationServices.getFusedLocationProviderClient(applicationContext)) }
@@ -45,7 +50,7 @@ class LocationService : Service() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         locationClient.getLocationUpdates(10000L)
-            .catch { Firebase.crashlytics.recordException(it) }
+            .catch { crashlytics.recordException(it) }
             .onEach { location ->
                 notificationManager.notify(1, notification.build())
                 updateMapLocation(location.latitude, location.longitude)

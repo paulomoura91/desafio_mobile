@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -12,8 +13,11 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.paulomoura.desafiomobile.R
+import com.paulomoura.desafiomobile.constant.AnalyticsConstants
 import com.paulomoura.desafiomobile.data.dao.UserLocationDao
 import com.paulomoura.desafiomobile.data.model.toUserLocation
 import com.paulomoura.desafiomobile.databinding.ActivityMapsBinding
@@ -25,8 +29,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    @Inject
+    lateinit var analytics: FirebaseAnalytics
 
     private val binding: ActivityMapsBinding by bindings(ActivityMapsBinding::inflate)
     private lateinit var googleMap: GoogleMap
@@ -45,6 +52,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(readyMap: GoogleMap) {
         googleMap = readyMap
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(-15.79, -47.88)))
+        analytics.logEvent(AnalyticsConstants.EVENT_RENDERED_MAP) {
+            param(AnalyticsConstants.PARAM_MAP_SUCCESS, true.toString())
+        }
     }
 
     override fun onDestroy() {
@@ -84,7 +95,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 auth.currentUser?.let {
                     userLocationDao.insert(latLong.toUserLocation(it))
                     val userLocation = userLocationDao.getUserLocation(it.uid)
-                    userLocation.toString()
+                    Log.d("ROOM", "Location saved locally: ${userLocation.toString()}")
                 }
             }
         }

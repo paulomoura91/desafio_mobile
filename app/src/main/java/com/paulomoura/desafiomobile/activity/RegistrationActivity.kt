@@ -4,12 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
-import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.paulomoura.desafiomobile.constant.AnalyticsConstants
 import com.paulomoura.desafiomobile.databinding.ActivityRegistrationBinding
 import com.paulomoura.desafiomobile.exception.RegisterUserErrorException
@@ -26,6 +25,10 @@ class RegistrationActivity : AppCompatActivity() {
 
     @Inject
     lateinit var auth: FirebaseAuth
+    @Inject
+    lateinit var analytics: FirebaseAnalytics
+    @Inject
+    lateinit var crashlytics: FirebaseCrashlytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +70,7 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun logRegisterUser(firebaseUser: FirebaseUser) {
-        Firebase.analytics.logEvent(AnalyticsConstants.EVENT_REGISTER_USER) {
+        analytics.logEvent(AnalyticsConstants.EVENT_REGISTER_USER) {
             param(AnalyticsConstants.PARAM_USER_ID, firebaseUser.uid)
             param(AnalyticsConstants.PARAM_USER_EMAIL, firebaseUser.email ?: "")
         }
@@ -94,5 +97,5 @@ class RegistrationActivity : AppCompatActivity() {
         }.show()
     }
 
-    private fun logRegisterUserError() = Firebase.crashlytics.recordException(RegisterUserErrorException())
+    private fun logRegisterUserError() = crashlytics.recordException(RegisterUserErrorException())
 }
