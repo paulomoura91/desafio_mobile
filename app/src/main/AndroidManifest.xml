@@ -28,9 +28,10 @@
 
         <activity
             android:name=".activity.MapsActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:exported="false" />
+            android:exported="false"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".activity.RegistrationActivity"
             android:exported="false" />
